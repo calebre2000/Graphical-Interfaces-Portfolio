@@ -17,19 +17,28 @@
 
 <script setup>
 import { computed } from "vue";
+import { Channel } from "../channels/channels";
 import About from "../channels/About.vue";
 import Projects from "../channels/Projects.vue";
+import Education from "../channels/Education.vue";
+import Skills from "../channels/Skills.vue";
 
 const props = defineProps({
-  channel: Number,
+  channel: String,
 });
 
 const currentComponent = computed(() => {
   switch (props.channel) {
-    case 1:
+    case Channel.ABOUT:
       return About;
-    case 2:
+    case Channel.PROJECTS:
       return Projects;
+    case Channel.EDUCATION:
+      return Education;
+    case Channel.SKILLS:
+      return Skills;
+    default:
+      return About;
   }
 });
 </script>
@@ -41,23 +50,19 @@ const currentComponent = computed(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 10px;
-  background: black;
-  border-radius: 70px;
+  padding: 1em;
+  background: #394c53;
+  border-radius: 50px;
+  border: 2px solid #6b6e73;
 }
 
 .inner-screen {
   position: relative;
   width: 100%;
   height: 100%;
-  border-radius: 60px;
-  background: radial-gradient(
-    130% 120% at 50% 44%, 
-    var(--inner-screen-color) 0%, 
-    color-mix(in srgb, var(--inner-screen-color) 70%, black) 55%, 
-    color-mix(in srgb, var(--inner-screen-color) 40%, black) 100%
-  );
+  border-radius: 70px;
   overflow: hidden;
+  border: 4px solid black;
 }
 
 .inner-screen::before {
@@ -67,7 +72,7 @@ const currentComponent = computed(() => {
   border-radius: 60px;
   box-shadow:
     inset 0 0 90px color-mix(in srgb, var(--inner-screen-color) 20%, black),
-    inset 0 0 0 14px rgba(255, 255, 255, 0.02);
+    inset 0 0 20px 10px rgba(0, 0, 0, 0.25);
   pointer-events: none;
   z-index: 10;
 }
@@ -75,6 +80,7 @@ const currentComponent = computed(() => {
 .channel {
     width: 100%;
     height: 100%;
+    background-color: var(--color-background, white);
 }
 
 .channel-enter-active,

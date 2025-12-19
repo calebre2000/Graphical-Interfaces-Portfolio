@@ -1,18 +1,23 @@
 <template>
     <div class="tv">
         <div class="tv-inner">
-            <TVScreen :channel="currentChannel" />
-            <TVButtons @about="currentChannel = 1" @projects="currentChannel = 2" />
+            <TVScreen 
+              :channel="currentChannel" 
+              @nextChannel="currentChannel = $event"
+              @prevChannel="currentChannel = $event"
+            />
+            <TVButtons :currentChannel="currentChannel" @changeScreen="currentChannel = $event" />
         </div>
     </div>
 </template>
 
 <script setup>
 import { ref } from "vue";
+import { Channel, DEFAULT_CHANNEL } from "../channels/channels";
 import TVScreen from "./TVScreen.vue";
 import TVButtons from "./TVButtons.vue";
 
-const currentChannel = ref(1);
+const currentChannel = ref(DEFAULT_CHANNEL);
 
 
 </script>
@@ -20,9 +25,9 @@ const currentChannel = ref(1);
 .tv {
     width: 100vw;
     height: 100vh;
-    background-color: rgb(210, 67, 4);
-    border-radius: 5rem;
-    padding: 10px 10px 40px 10px;
+    background-color: var(--color-yellow);
+    border-radius: 3rem;
+    padding: 10px 10px 30px 10px;
 }
 
 .tv-inner {
@@ -30,9 +35,10 @@ const currentChannel = ref(1);
     width: 100%;
     display: flex;
     flex-direction: row;
-    background-color: rgb(135 48 20);
-    border-radius: 4rem;
+    background-color: rgb(29, 29, 29);
+    border-radius: 3rem;
     overflow: hidden;
-    padding: 1rem;
+    padding: 0.5rem;
+    border: 4px solid rgb(0, 0, 0);
 }
 </style>
