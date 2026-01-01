@@ -1,9 +1,11 @@
-export enum Channel {
-  ABOUT = 'about',
-  PROJECTS = 'projects',
-  EDUCATION = 'education',
-  SKILLS = 'skills'
-}
+export const Channel = {
+  ABOUT: 'about',
+  PROJECTS: 'projects',
+  EDUCATION: 'education',
+  SKILLS: 'skills'
+} as const;
+
+export type Channel = typeof Channel[keyof typeof Channel];
 
 export const CHANNEL_LABELS: Record<Channel, string> = {
   [Channel.ABOUT]: 'About',
