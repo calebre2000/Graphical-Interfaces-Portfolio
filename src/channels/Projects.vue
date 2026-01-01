@@ -1,17 +1,11 @@
 <template>
-    <div class="screen">
+    <div class="screen" :class="{ 'grid-view': showGrid }">
         <template class="proje#cts-grid" v-if="showGrid">
             <ProjectsGrid @selectProject="currentProject = $event; showGrid = false" />
         </template>
-        <div class="project-details" v-else>
-            <!-- <Card :header="projects[currentProject].title" :year="projects[currentProject].year"
-                :imgSrc="projects[currentProject].image" :description="projects[currentProject].description">
-            </Card> -->
-            <div class="image-track">
-                <img v-for="project in projects" :key="project.title" :src="project.image" :alt="project.title" />
-                <img v-for="project in projects" :key="'duplicate-' + project.title" :src="project.image"
-                    :alt="project.title" />
-            </div>
+        <div class="project-details" v-else :style="gradientStyle">
+            <Card :project="projects[currentProject]">
+            </Card>
             <div class="button-container">
                 <button @click="previousProject">◀ Previous</button>
                 <button @click="showGrid = !showGrid" aria-label="Grid">
@@ -32,6 +26,60 @@ import ProjectsGrid from './ProjectsGrid.vue';
 const showGrid = ref(false)
 const currentProject = ref(0);
 const numberOfProjects = computed(() => projects.length);
+
+const rotateHue = (hex, degrees) => {
+    if (!hex) return '#ffffff';
+    
+    hex = hex.replace('#', '');
+    const r = parseInt(hex.substring(0, 2), 16) / 255;
+    const g = parseInt(hex.substring(2, 4), 16) / 255;
+    const b = parseInt(hex.substring(4, 6), 16) / 255;
+    
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    const c = max - min;
+    
+    let h = 0;
+    if (c !== 0) {
+        if (max === r) h = ((g - b) / c + (g < b ? 6 : 0)) / 6;
+        else if (max === g) h = ((b - r) / c + 2) / 6;
+        else h = ((r - g) / c + 4) / 6;
+    }
+    
+    const s = max === 0 ? 0 : c / max;
+    const v = max;
+    
+    h = (h + degrees / 360) % 1;
+    
+    const c2 = v * s;
+    const hp = h * 6;
+    const x = c2 * (1 - Math.abs((hp % 2) - 1));
+    const m = v - c2;
+    
+    let r2, g2, b2;
+    if (hp < 1) { r2 = c2; g2 = x; b2 = 0; }
+    else if (hp < 2) { r2 = x; g2 = c2; b2 = 0; }
+    else if (hp < 3) { r2 = 0; g2 = c2; b2 = x; }
+    else if (hp < 4) { r2 = 0; g2 = x; b2 = c2; }
+    else if (hp < 5) { r2 = x; g2 = 0; b2 = c2; }
+    else { r2 = c2; g2 = 0; b2 = x; }
+    
+    const toHex = (value) => {
+        const hex = Math.round((value + m) * 255).toString(16);
+        return hex.length === 1 ? '0' + hex : hex;
+    };
+    
+    return `#${toHex(r2)}${toHex(g2)}${toHex(b2)}`;
+};
+
+const gradientStyle = computed(() => {
+    const color1 = projects[currentProject.value]?.color || '#ffffff';
+    const color2 = rotateHue(color1, 45);
+    
+    return {
+        backgroundImage: `linear-gradient(135deg, ${color1} 0%, ${color2} 100%)`
+    };
+});
 
 const nextProject = () => {
     currentProject.value = (currentProject.value + 1) % numberOfProjects.value;
@@ -54,6 +102,9 @@ const previousProject = () => {
     justify-content: center;
     width: 100%;
     height: 100%;
+}
+
+.screen.grid-view {
     background: url('../assets/swirls.png');
 }
 
@@ -62,10 +113,12 @@ const previousProject = () => {
     width: 100%;
     display: flex;
     flex-direction: column;
-    padding: 8%;
 }
 
 .button-container {
+    position: absolute;
+    width: 100%;
+    bottom: 20px;
     gap: 20px;
     justify-content: center;
     margin-top: 30px;

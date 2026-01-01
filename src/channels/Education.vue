@@ -1,21 +1,70 @@
 <template>
     <div class="screen">
-        <div class="timeline">
-            <div class="timeline-item" v-for="(item, index) in items" :key="index" :class="item.type">
-                <div class="year-badge">{{ item.year }}</div>
-                <div class="content-card">
-                    <div class="card-icon" :style="{ background: item.color }">{{ item.icon }}</div>
-                    <h2>{{ item.title }}</h2>
-                    <h3>{{ item.subtitle }}</h3>
-                    <p>{{ item.description }}</p>
+        <div class="header-block">
+            <div class="top-bar">
+                <div class="program-name">
+                    <span class="name">Carla</span>
+                    <span class="cv-badge">TV</span>
+                </div>
+                <div class="right-info">
+                    <span class="label">Teletext</span>
+                    <span class="time">{{ currentTime }}</span>
+                </div>
+            </div>
+            <div class="tabs">
+                <div
+                    class="tab"
+                    :class="{ active: activeTab === 'all' }"
+                    @click="activeTab = 'all'"
+                >
+                    all
+                </div>
+                <div
+                    class="tab"
+                    :class="{ active: activeTab === 'education' }"
+                    @click="activeTab = 'education'"
+                >
+                    education
+                </div>
+                <div
+                    class="tab"
+                    :class="{ active: activeTab === 'work' }"
+                    @click="activeTab = 'work'"
+                >
+                    work experience
                 </div>
             </div>
         </div>
+
+        <div class="table-wrapper" ref="tableWrapper">
+            <table>
+                <tbody v-for="group in groupedItems" :key="group.type">
+                    <tr class="section-header" :style="headerStyle(group.type)">
+                        <td colspan="2">{{ group.label }}</td>
+                    </tr>
+                    <tr
+                        v-for="(item, index) in group.items"
+                        :key="`${group.type}-${index}`"
+                        class="item-row"
+                    >
+                        <td class="date">{{ item.year }}</td>
+                        <td class="content">
+                            <span class="dot-line"></span>
+                            <span class="content-text">
+                                <strong>{{ item.title }}</strong><br>
+                                {{ item.subtitle }}<br>
+                                {{ item.description }}
+                            </span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div v-if="canScroll" class="scroll-indicator" @click="handleScrollClick">{{ scrollArrow }}</div>
     </div>
 </template>
-
 <script setup>
-import { ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 
 const items = ref([
     {
@@ -23,8 +72,6 @@ const items = ref([
         title: 'University of Gothenburg',
         subtitle: 'Erasmus Computer Science',
         description: 'Studying UI/UX Design and modern web technologies',
-        icon: '🎓',
-        color: 'var(--color-turquoise-light)',
         type: 'education'
     },
     {
@@ -32,8 +79,6 @@ const items = ref([
         title: 'University of Ulm',
         subtitle: 'Master Media Informatics',
         description: 'Studying Software Engineering, Human-Computer Interaction, and Advanced Web Technologies',
-        icon: '🎓',
-        color: 'var(--color-turquoise-light)',
         type: 'education'
     },
     {
@@ -41,8 +86,6 @@ const items = ref([
         title: 'Software Developer',
         subtitle: 'Head-on Solutions GmbH, Nürnberg',
         description: 'Built responsive web apps with Vue.js and collaborated on UI improvements',
-        icon: '💼',
-        color: 'var(--color-yellow)',
         type: 'work'
     },
     {
@@ -50,8 +93,6 @@ const items = ref([
         title: 'Working Student Software Development',
         subtitle: 'IT-Labs GmbH, Fürth',
         description: 'Built responsive web apps with Angular',
-        icon: '💼',
-        color: 'var(--color-yellow)',
         type: 'work'
     },
     {
@@ -59,8 +100,6 @@ const items = ref([
         title: 'TH Nürnberg',
         subtitle: 'Bachelor Media Engineering',
         description: 'Studying Software Engineering, Human-Computer Interaction, and Advanced Web Technologies',
-        icon: '🎓',
-        color: 'var(--color-turquoise-light)',
         type: 'education'
     },
     {
@@ -68,8 +107,6 @@ const items = ref([
         title: 'Work and Travel',
         subtitle: 'Vancouver, Canada',
         description: 'Worked in food service',
-        icon: '🧳',
-        color: 'var(--color-pink-light)',
         type: 'work'
     },
     {
@@ -77,8 +114,6 @@ const items = ref([
         title: 'Sales Assistant in a Bakery',
         subtitle: 'K&U Bäckerei, Karlsruhe',
         description: 'Worked in food service',
-        icon: '💼',
-        color: 'var(--color-yellow)',
         type: 'work'
     },
     {
@@ -86,162 +121,261 @@ const items = ref([
         title: 'Helmholtz Gymnasium Karlsruhe',
         subtitle: 'Abitur',
         description: 'Specialization in Science and Art',
-        icon: '📚',
-        color: 'var(--color-red-light)',
         type: 'education'
     }
 ]);
+
+const activeTab = ref('all');
+const tableWrapper = ref(null);
+const isAtBottom = ref(false);
+const canScroll = ref(false);
+
+const scrollArrow = computed(() => isAtBottom.value ? '▲' : '▼');
+
+const checkScrollPosition = () => {
+    if (tableWrapper.value) {
+        const { scrollTop, scrollHeight, clientHeight } = tableWrapper.value;
+        canScroll.value = scrollHeight > clientHeight;
+        isAtBottom.value = scrollTop + clientHeight >= scrollHeight - 10;
+    }
+};
+
+const handleScrollClick = () => {
+    if (!tableWrapper.value) return;
+    
+    if (isAtBottom.value) {
+        tableWrapper.value.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+        tableWrapper.value.scrollBy({ top: 200, behavior: 'smooth' });
+    }
+};
+
+const typeLabels = {
+    education: 'Education',
+    work: 'Work Experience'
+};
+
+const typeColors = {
+    education: '#cc0000',
+    work: '#0033cc'
+};
+
+const groupedItems = computed(() => {
+    const filtered = activeTab.value === 'all'
+        ? items.value
+        : items.value.filter((item) => item.type === activeTab.value);
+    const order = ['education', 'work'];
+    return order
+        .map((type) => ({
+            type,
+            label: typeLabels[type] || type,
+            items: filtered.filter((item) => item.type === type)
+        }))
+        .filter((group) => group.items.length > 0);
+});
+
+const headerStyle = (type) => ({
+    backgroundColor: typeColors[type] || '#000000',
+    color: '#ffffff'
+});
+
+const formatTime = (date) =>
+    date.toLocaleTimeString('de-DE', {
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+    });
+
+const currentTime = ref(formatTime(new Date()));
+let timerId;
+
+watch(activeTab, () => {
+    setTimeout(() => {
+        checkScrollPosition();
+    }, 50);
+});
+
+onMounted(() => {
+    timerId = setInterval(() => {
+        currentTime.value = formatTime(new Date());
+    }, 1000);
+    
+    if (tableWrapper.value) {
+        tableWrapper.value.addEventListener('scroll', checkScrollPosition);
+        checkScrollPosition();
+    }
+});
+
+onBeforeUnmount(() => {
+    if (timerId) clearInterval(timerId);
+    if (tableWrapper.value) {
+        tableWrapper.value.removeEventListener('scroll', checkScrollPosition);
+    }
+});
 </script>
 
 <style scoped>
 @font-face {
-    font-family: 'Sauce Tomato';
-    src: url('../assets/Sauce Tomato.otf') format('opentype');
+    font-family: 'PixelifySans';
+    src: url('../assets/PixelifySans.ttf') format('truetype');
+    font-display: swap;
 }
-@font-face {
-    font-family: 'Moliga';
-    src: url('../assets/Moliga DEMO.otf') format('opentype');
-}
-@font-face {
-    font-family: 'Gladolia';
-    src: url('../assets/GladoliaDEMO-Regular.otf') format('opentype');
-}
+
 .screen {
+    position: relative;
     width: 100%;
     height: 100%;
-    padding: 6% 8%;
-    overflow-y: auto;
-    background: linear-gradient(135deg, var(--color-pink-light) 0%, var(--color-turquoise-light) 100%);
-
+    padding: 0;
+    overflow: hidden;
+    background-color: #000000;
+    font-family: 'Courier New', monospace;
+    color: #00ff00;
+    line-height: 1.2;
 }
 
-.timeline {
-    max-width: 800px;
-    margin: 0 auto;
-    position: relative;
-}
-
-.timeline::before {
-    content: '';
-    position: absolute;
-    left: 60px;
+.header-block {
+    position: sticky;
     top: 0;
-    bottom: 0;
-    width: 4px;
-    background-image: repeating-linear-gradient(180deg, var(--color-white) 0px, var(--color-white) 8px, transparent 8px, transparent 16px);
+    z-index: 5;
+    background-color: #000000;
 }
 
-.timeline-item {
+.top-bar {
     display: flex;
-    gap: 30px;
-    margin-bottom: 50px;
-    position: relative;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    background-color: #000000;
+    color: #ffffff;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-.timeline-item:last-child {
-    margin-bottom: 0;
-}
-
-.year-badge {
-    width: 120px;
-    height: 50px;
+.program-name {
+    flex: 1;
     display: flex;
     align-items: center;
-    justify-content: center;
-   font-family: 'Sauce Tomato', 'Arial', sans-serif;
-    color: var(--color-red);
-    font-weight: 800;
-    text-shadow: 2px 2px 0 var(--color-white), 4px 4px 0 var(--color-pink-light);
-    font-size: 2rem;
-    font-weight: 900;
-    position: relative;
-    z-index: 2;
+    gap: 8px;
+    font-family: 'PixelifySans', 'Courier New', monospace;
+    font-size: 3rem;
 }
 
-.content-card {
-    flex: 1;
-    box-shadow: 10px 15px 0 var(--color-dark);
-    background-color: var(--color-surface);
-    border: 1px solid var(--color-border);
-    padding: 30px;
-    box-shadow: 8px 8px 0 var(--color-dark);
-    position: relative;
-    transition: transform 0.3s, box-shadow 0.3s;
+.program-name .cv-badge {
+    background-color: #ffff00;
+    color: #000000;
+}
+
+.program-name .name {
+    color: #ffffff;
+}
+
+.right-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.top-bar .label {
+    color: #00ff00;
+}
+
+.top-bar .time {
+    color: #ffffff;
+}
+
+.tabs {
+    display: flex;
+    gap: 8px;
+    background-color: #00ffff;
+    color: #000000;
+}
+
+.tab {
+    padding: 6px 10px;
+    font-family: 'Courier New', monospace;
+    text-transform: uppercase;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.tab.active {
+    background-color: #00ff00;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table-wrapper {
+    height: calc(100% - 120px);
+    overflow-y: auto;
+    padding: 0 0 24px;
+    scrollbar-width: none;
+}
+
+.table-wrapper::-webkit-scrollbar {
+    display: none;
+}
+
+.section-header {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+}
+
+.section-header td {
+    padding: 10px 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: left;
+    padding-left: 4em;
+    font-size: 1.2em;
+}
+
+.item-row {
+    background-color: #000000;
+    color: #ffffff;
+}
+
+
+td {
+    padding: 8px 12px;
+    border: none;
+    vertical-align: top;
+    font-size: 0.95rem;
+}
+
+.date {
+    font-weight: bold;
+    text-align: left;
+    white-space: nowrap;
+    color: rgb(0, 255, 0);
+}
+
+.content {
     text-align: left;
 }
 
-.timeline-item:hover .content-card {
-    transform: translateY(-4px);
-    box-shadow: 10px 12px 0 var(--color-dark);
+.content strong {
+    font-weight: bold;
+    text-transform: uppercase;
 }
 
-.card-icon {
+.scroll-indicator {
     position: absolute;
-    top: -15px;
-    right: 20px;
-    width: 45px;
-    height: 45px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.4rem;
-    border: 1px solid var(--color-dark);
-}
-
-.content-card h2 {
-    margin: 0 0 4px 0;
-    font-size: 1em;
-    color: var(--color-dark);
-    line-height: 1;
-    font-weight: 600;
-}
-
-.content-card h3 {
-    margin: 0 0 8px 0;
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: var(--color-dark);
-    font-style: italic;
-}
-
-.content-card p {
-    margin: 0;
-    line-height: 1.4;
-    color: var(--color-dark);
-    font-size: 0.9rem;
-}
-
-@media (max-width: 768px) {
-    .screen {
-        padding: 4%;
-    }
-
-    .timeline::before {
-        left: 45px;
-    }
-
-    .timeline-item {
-        gap: 20px;
-        margin-bottom: 40px;
-    }
-
-    .year-badge {
-        width: 90px;
-        height: 90px;
-        font-size: 1.5rem;
-    }
-
-    .content-card {
-        padding: 20px;
-    }
-
-
-    .card-icon {
-        width: 50px;
-        height: 50px;
-        font-size: 1.5rem;
-        right: 20px;
-    }
+    bottom: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #00ffff;
+    font-family: 'PixelifySans', 'Courier New', monospace;
+    font-size: 1rem;
+    text-shadow: 1px 1px 0 #000000;
+    cursor: pointer;
+    user-select: none;
 }
 </style>

@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: 'Sauce Tomato';
+  src: url('./assets/Sauce Tomato.otf') format('opentype');
+  font-display: swap;
+}
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -38,18 +44,22 @@ h1 {
 }
 
 button {
-  background: var(--color-turquoise-dark);
-  color: var(--color-white);
+  font-family: 'Sauce Tomato', system-ui, sans-serif;
+  background: linear-gradient(90deg, var(--color-yellow) 0%, var(--color-pink) 100%);
+  color: var(--color-dark);
   border: 1px solid var(--color-border);
   padding: 8px 12px;
-  font-weight: 700;
+  font-size: 1em;
   cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
   box-shadow: 4px 6px 0 var(--color-dark);
   border-radius: 10px;
+  /* text-shadow: 2px 4px 0 var(--color-pink); */
 }
 
 button:hover {
-  background: var(--color-turquoise);
+  background: linear-gradient(90deg, var(--color-pink) 0%, var(--color-yellow) 100%);
 }
 
 button:active {

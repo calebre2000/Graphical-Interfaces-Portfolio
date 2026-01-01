@@ -33,7 +33,7 @@ const currentComponent = computed(() => {
       return About;
     case Channel.PROJECTS:
       return Projects;
-    case Channel.EDUCATION:
+    case Channel.CV:
       return Education;
     case Channel.SKILLS:
       return Skills;

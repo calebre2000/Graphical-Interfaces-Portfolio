@@ -1,7 +1,7 @@
 export const Channel = {
   ABOUT: 'about',
   PROJECTS: 'projects',
-  EDUCATION: 'education',
+  CV: 'cv',
   SKILLS: 'skills'
 } as const;
 
@@ -10,7 +10,7 @@ export type Channel = typeof Channel[keyof typeof Channel];
 export const CHANNEL_LABELS: Record<Channel, string> = {
   [Channel.ABOUT]: 'About',
   [Channel.PROJECTS]: 'Projects',
-  [Channel.EDUCATION]: 'Education',
+  [Channel.CV]: 'CV',
   [Channel.SKILLS]: 'Skills'
 };
 
