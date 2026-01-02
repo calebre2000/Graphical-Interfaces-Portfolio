@@ -74,10 +74,10 @@ const rotateHue = (hex, degrees) => {
 
 const gradientStyle = computed(() => {
     const color1 = projects[currentProject.value]?.color || '#ffffff';
-    const color2 = rotateHue(color1, 45);
+    const color2 = rotateHue(color1, 30);
     
     return {
-        backgroundImage: `linear-gradient(135deg, ${color1} 0%, ${color2} 100%)`
+        background: `repeating-conic-gradient(${color1} 0 25%, ${color2} 0 50%) 50% / 80px 80px`
     };
 });
 
@@ -102,6 +102,7 @@ const previousProject = () => {
     justify-content: center;
     width: 100%;
     height: 100%;
+
 }
 
 .screen.grid-view {

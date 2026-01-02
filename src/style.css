@@ -45,21 +45,19 @@ h1 {
 
 button {
   font-family: 'Sauce Tomato', system-ui, sans-serif;
-  background: linear-gradient(90deg, var(--color-yellow) 0%, var(--color-pink) 100%);
-  color: var(--color-dark);
-  border: 1px solid var(--color-border);
+  background: var(--color-yellow-dark);
+  color: var(--color-background);
   padding: 8px 12px;
   font-size: 1em;
   cursor: pointer;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  box-shadow: 4px 6px 0 var(--color-dark);
   border-radius: 10px;
   /* text-shadow: 2px 4px 0 var(--color-pink); */
 }
 
 button:hover {
-  background: linear-gradient(90deg, var(--color-pink) 0%, var(--color-yellow) 100%);
+  background: var(--color-yellow-light);
 }
 
 button:active {

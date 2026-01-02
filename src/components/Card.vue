@@ -1,20 +1,21 @@
 <template>
     <div class="card">
-        <div class="year-badge" v-if="props.project?.year">
-            <div>{{ props.project.year.substring(0, 2) }}</div>
-            <div>{{ props.project.year.substring(2) }}</div>
-        </div>
         <div class="content">
-            <div class="left">
-                <img v-if="props.project?.image" :src="props.project.image" :alt="props.project?.title" />
-            </div>
             <div class="right">
-                <div class="title" :style="{ color: props.project?.color }">{{ props.project?.title }}</div>
+                <div class="title">{{ props.project?.title }}</div>
                 <div class="description" v-if="props.project?.description" 
-                     :style="{ backgroundColor: lightenColor(props.project?.color) }">
+                     :style="{ backgroundColor: props.project?.color }">
                     {{ props.project.description }}
                 </div>
             </div>
+            <div class="left">
+                <img v-if="props.project?.image" :src="props.project.image" :alt="props.project?.title" />
+                    <div class="year-badge" v-if="props.project?.year">
+            <div>{{ props.project.year.substring(0, 2) }}</div>
+            <div>{{ props.project.year.substring(2) }}</div>
+        </div>
+            </div>
+
         </div>
     </div>
 </template>
@@ -58,20 +59,20 @@ const lightenColor = (hex) => {
 }
 
 .content {
-    padding: 2em 1em 3em 1em;
+    padding: 2em 2em 5em 2em;
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
     width: 100%;
     height: 100%;
     align-content: center;
-    transform: skewY(-5deg);
 
     .left {
         flex: 3;
         display: flex;
         flex-direction: column;
         gap: 12px;
+        position: relative;
     }
 
     img {
@@ -98,21 +99,24 @@ const lightenColor = (hex) => {
         position: relative;
 
         .title {
-            z-index: 2;
-            position: absolute;
-            top: 0;
-            transform: translateY(-100%);
+            color: var(--color-background);
             font-size: 2.5rem;
             font-weight: 900;
             line-height: 1;
             text-transform: uppercase;
-
+            padding-right: 20%;
+            
         }
 
         .description {
-            margin-top: 1em;
-            margin-bottom: 1em;
-            padding: 1.5em 0.5em;
+            font-size: 1em;
+            bottom: -10px;
+            left: -20px;
+            z-index: 2;
+            transform: translateY(100%);
+            position: absolute;
+            padding: 0.5em;
+            box-shadow: 4px 6px 0 var(--color-dark);
         }
     }
 }
@@ -125,8 +129,9 @@ const lightenColor = (hex) => {
 .year-badge {
     min-width: 120px;
     position: absolute;
-    top: 1em;
-    right: -0;
+        top: -1em;
+    right: -1em;
+
     z-index: 3;
     font-family: 'Sauce Tomato', sans-serif;
     font-size: 2rem;

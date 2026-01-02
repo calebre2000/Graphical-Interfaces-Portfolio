@@ -25,6 +25,7 @@ const currentChannel = ref(DEFAULT_CHANNEL);
 .tv {
     width: 100vw;
     height: 100vh;
+    max-width: 1700px;
     background-color: var(--color-yellow);
     border-radius: 3rem;
     padding: 10px 10px 30px 10px;

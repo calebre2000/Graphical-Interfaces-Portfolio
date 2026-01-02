@@ -66,6 +66,7 @@ const openLinkedIn = () => {
   border-radius: 20px;
   width: 20%;
   min-width: 100px;
+  max-width: 300px;
   display: flex;
   flex-direction: column;
   align-items: center;
