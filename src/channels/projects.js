@@ -1,6 +1,6 @@
 import capaxImg from '../assets/capax.png';
 import capax from '../assets/capax.gif';
-import LightShow from '../assets/lightShow.gif';
+import LightShow from '../assets/LightShow.gif';
 import LightShowRig from '../assets/light-show-rig.png';
 export const projects = [
   {
