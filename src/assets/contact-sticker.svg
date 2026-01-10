@@ -1,0 +1,35 @@
+<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-opacity="0.3"/>
+    </filter>
+    <style>
+      .sticker-text {
+        font-family: 'Fredoka', 'Arial', sans-serif;
+        font-size: 72px;
+        font-weight: 700;
+        fill: #ff69b4;
+        stroke: #143a52;
+        stroke-width: 3;
+        stroke-linejoin: round;
+        text-anchor: middle;
+        letter-spacing: 2px;
+      }
+      .sparkle { fill: #ff9ac6; }
+    </style>
+  </defs>
+
+  <!-- Wavy white border with soft shadow -->
+  <path d="M 30 80 Q 20 60 40 50 Q 60 40 80 45 Q 100 50 110 70 Q 115 85 120 100 Q 125 120 135 130 Q 150 140 170 135 Q 190 130 200 115 Q 210 100 220 95 Q 240 85 260 90 Q 280 95 290 115 Q 300 135 305 155 Q 310 175 315 190 Q 318 205 330 215 Q 350 230 365 225 Q 375 220 370 200 Q 365 180 360 160 Q 355 140 358 120 Q 362 100 375 95 Q 385 90 375 75 Q 365 60 345 65 Q 325 70 315 85 Q 305 95 300 110 Q 295 130 285 145 Q 275 160 255 165 Q 235 170 220 155 Q 210 145 205 125 Q 200 105 195 85 Q 190 65 175 60 Q 155 55 140 70 Q 130 80 128 100 Q 125 120 120 140 Q 115 155 100 160 Q 80 165 65 150 Q 55 140 50 120 Q 45 100 40 80 Q 38 65 25 70 Q 15 75 20 95 Z" fill="white" stroke="#E8E8E8" stroke-width="2" filter="url(#shadow)"/>
+
+  <!-- Text -->
+  <text x="200" y="160" class="sticker-text">Contact Me</text>
+
+  <!-- Sparkles -->
+  <g class="sparkle">
+    <path d="M 80 50 L 85 60 L 95 65 L 85 70 L 80 80 L 75 70 L 65 65 L 75 60 Z"/>
+    <path d="M 320 45 L 327 58 L 342 65 L 327 72 L 320 85 L 313 72 L 298 65 L 313 58 Z"/>
+    <path d="M 70 220 L 75 230 L 85 235 L 75 240 L 70 250 L 65 240 L 55 235 L 65 230 Z"/>
+    <path d="M 330 230 L 337 242 L 352 248 L 337 254 L 330 266 L 323 254 L 308 248 L 323 242 Z"/>
+  </g>
+</svg>

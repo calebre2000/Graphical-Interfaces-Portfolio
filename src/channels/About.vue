@@ -2,13 +2,18 @@
     <div class="screen">
         <span class="text-box">Hello, I'm Carla!</span>
         <!-- <span class="text-box"></span> -->
-        <div class="cookie">Software Developer</div>
-        <div class="cookie">Frontend</div>
+        <div class="cookie"></div>
+        <div class="cookie"></div>
+        <div class="cookie"></div>
+        
         <div class="see-more">
             <span>* Welcome to my portfolio! * Glad you're here :) * Feel free to explore my CV, recent projects and more! * </span>
         </div>
         
-        <img class="picture" src="../assets/me_cutout.png" alt="Profile Picture" />
+        <div class="picture-wrap">
+            <img class="picture" src="../assets/me_cutout.png" alt="Profile Picture" />
+            <div class="speech-bubble">I'm a software developer based in Germany. I specialize in frontend development and love creating beautiful and user-friendly interfaces.</div>
+        </div>
     </div>
 </template>
 <script setup></script>
@@ -42,16 +47,21 @@
         );
 }
 
-.picture {
-    width: 600px;
+
+.picture-wrap {
     position: absolute;
     bottom: -80px;
     right: -5%;
+}
+
+.picture {
+    width: 600px;
+    display: block;
     filter: drop-shadow(5px 10px 0 var(--color-dark));
 }
 
 @media (max-width: 1000px) {
-    .picture {
+    .picture-wrap {
         right: -80px;
     }
 }
@@ -75,19 +85,42 @@
     /* background-color: var(--color-red-dark); */
     position:absolute;
     left: 5%;
+    top: 5%;
     /* font-weight: bold; */
 }
-.screen .text-box:nth-of-type(1) {
-    top: 5%;
-    min-width: 40%;
-}
-.screen .text-box:nth-of-type(2) {
-    min-width: 50%;
-    top: calc(15% + 120px);
+
+.speech-bubble {
+    z-index: 4;
+    background: var(--color-yellow-light);
+    border-radius: .4em;
+    position: absolute;
+    right: calc(100% + -220px);
+    top: 50%;
+    transform: translateY(-60%);
+    width: 270px;
+    color: var(--color-dark);
+    font-size: 1.3em;
+    padding: 0.5em;
+    border: 1px solid var(--color-dark);
+    box-shadow: 6px 8px 0 var(--color-dark);
 }
 
+.speech-bubble:after {
+	content: '';
+	position: absolute;
+	right: 0;
+	top: 50%;
+	width: 0;
+	height: 0;
+	border: 1.156em solid transparent;
+	border-left-color: var(--color-yellow-light);
+	border-right: 0;
+	border-top: 0;
+	margin-top: -0.578em;
+	margin-right: -1.156em;
+}
 .cookie {
-    z-index: 1;
+    z-index: 0;
     position: absolute;
     bottom: 10%;
     left: 5%;
@@ -123,6 +156,16 @@
     font-weight: 700;
 }
 
+.cookie:nth-of-type(3) {
+    background-color: var(--color-turquoise);
+    width: 274px;
+    left: 86%;
+    bottom: 6%;
+    transform: rotate(8deg);
+    font-size: 1.2em;
+    font-weight: 700;
+}
+
 .see-more {
     background-color: rgba(0, 0, 0, 0.7);
     z-index: 2;
@@ -143,7 +186,7 @@
     overflow: hidden;
 
     span {
-        animation: run 10s linear infinite;
+        animation: run 14s linear infinite;
     }
 }
 

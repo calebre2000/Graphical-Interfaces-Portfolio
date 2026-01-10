@@ -1,19 +1,18 @@
 <template>
     <div class="card">
         <div class="content">
-            <div class="right">
                 <div class="title">{{ props.project?.title }}</div>
-                <div class="description" v-if="props.project?.description" 
-                     :style="{ backgroundColor: props.project?.color }">
-                    {{ props.project.description }}
-                </div>
-            </div>
-            <div class="left">
+
+            <div class="image-wrapper">
                 <img v-if="props.project?.image" :src="props.project.image" :alt="props.project?.title" />
-                    <div class="year-badge" v-if="props.project?.year">
-            <div>{{ props.project.year.substring(0, 2) }}</div>
-            <div>{{ props.project.year.substring(2) }}</div>
-        </div>
+                <span class="description" v-if="props.project?.description"
+                    :style="{ backgroundColor: props.project?.color }">
+                    {{ props.project.description }}
+            </span>
+                <div class="year-badge" v-if="props.project?.year">
+                    <div>{{ props.project.year.substring(0, 2) }}</div>
+                    <div>{{ props.project.year.substring(2) }}</div>
+                </div>
             </div>
 
         </div>
@@ -30,58 +29,56 @@ const props = defineProps({
 
 const lightenColor = (hex) => {
     if (!hex) return '#ffffff';
-    
+
     hex = hex.replace('#', '');
-    
+
     const r = parseInt(hex.substring(0, 2), 16);
     const g = parseInt(hex.substring(2, 4), 16);
     const b = parseInt(hex.substring(4, 6), 16);
-    
+
     const newR = Math.min(255, Math.round(r + (255 - r) * (60 / 100)));
     const newG = Math.min(255, Math.round(g + (255 - g) * (60 / 100)));
     const newB = Math.min(255, Math.round(b + (255 - b) * (60 / 100)));
-    
+
     const toHex = (value) => {
         const hex = value.toString(16);
         return hex.length === 1 ? '0' + hex : hex;
     };
-    
+
     return `#${toHex(newR)}${toHex(newG)}${toHex(newB)}`;
 };
 </script>
 
 <style scoped>
+@font-face {
+    font-family: 'Sauce Tomato';
+    src: url('../assets/Sauce Tomato.otf') format('opentype');
+}
+
 .card {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    position: relative;
+    height: 100%;
 }
 
 .content {
     padding: 2em 2em 5em 2em;
-    display: flex;
-    flex-direction: column;
-    flex-wrap: wrap;
     width: 100%;
     height: 100%;
-    align-content: center;
+    display: flex;
+    flex-direction: column;
 
-    .left {
-        flex: 3;
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
+    .image-wrapper {
+                border-radius: 8px;
         position: relative;
+        flex: 1;
+        min-height: 0;
+        background-color: black;
     }
-
+    
     img {
-        z-index: 1;
-        display: block;
-        width: 100%;
+        object-fit:contain;
+        border-radius: 8px;
         height: 100%;
-        object-fit: cover;
-
+        width: 100%;
     }
 
     .see-more {
@@ -91,33 +88,37 @@ const lightenColor = (hex) => {
     .see-more:hover {
         background: var(--color-pink);
     }
-
-    .right {
-        text-align: left;
-        align-content: center;
-        color: var(--color-dark);
-        position: relative;
-
         .title {
+            text-align: left;
             color: var(--color-background);
-            font-size: 2.5rem;
+            font-size: 2rem;
             font-weight: 900;
-            line-height: 1;
-            text-transform: uppercase;
+            line-height: 1.4;
+            /* text-transform: uppercase; */
             padding-right: 20%;
-            
+            font-family: 'Sauce Tomato', sans-serif;
+            margin-bottom: 0.5em;
         }
+
+
+
+
 
         .description {
-            font-size: 1em;
-            bottom: -10px;
+                    color: var(--color-dark);
+            top: 10px;
             left: -20px;
             z-index: 2;
-            transform: translateY(100%);
             position: absolute;
             padding: 0.5em;
-            box-shadow: 4px 6px 0 var(--color-dark);
-        }
+            border: 1px solid var(--color-dark);
+            box-shadow: 6px 8px 0 var(--color-dark);
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 400;
+            max-width: 60%;
+            font-family: sans-serif;
+        
     }
 }
 
@@ -129,7 +130,7 @@ const lightenColor = (hex) => {
 .year-badge {
     min-width: 120px;
     position: absolute;
-        top: -1em;
+    top: -1em;
     right: -1em;
 
     z-index: 3;
@@ -145,5 +146,17 @@ const lightenColor = (hex) => {
     mask-size: contain;
     mask-repeat: no-repeat;
     mask-position: center;
+}
+
+.year-badge:hover {
+    animation: rotateCookie 4s linear infinite;
+}
+@keyframes rotateCookie {
+    from {
+        transform: rotate(-0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
 }
 </style>

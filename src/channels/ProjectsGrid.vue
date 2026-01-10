@@ -1,8 +1,8 @@
 <template>
     <div class="grid-container">
-        <div v-for="index in 6" :key="index" class="grid-item" @click="emit('selectProject', index - 1)">
+        <div v-for="index in 6" :key="index" class="grid-item" @click="changeProject(index)">
             <div v-if="projects[index - 1]" class="item-image">
-                <img :src="projects[index - 1].image" :alt="projects[index - 1].title" />
+                <img :src="projects[index - 1].thumbnail" :alt="projects[index - 1].title" />
             </div>
             <div v-else class="item-placeholder">
                 <span>Coming soon...</span>
@@ -23,6 +23,11 @@
 import { projects } from './projects.js';
 
 const emit = defineEmits(['selectProject']);
+
+const changeProject = (index) => {
+    if (!projects[index - 1]) return;
+    emit('selectProject', index - 1);
+};
 </script>
 
 <style scoped>
@@ -40,7 +45,7 @@ const emit = defineEmits(['selectProject']);
 .grid-item {
     cursor: pointer;
     background: var(--color-surface);
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--color-dark);
     border-radius: 20px;
     overflow: hidden;
     box-shadow: 6px 8px 0 var(--color-dark);
@@ -72,7 +77,10 @@ const emit = defineEmits(['selectProject']);
 .item-placeholder {
     width: 100%;
     height: 200px;
-    background: linear-gradient(135deg, var(--color-pink-light) 0%, var(--color-turquoise-light) 100%);
+    background-image: url('../assets/noSignal.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -105,14 +113,10 @@ const emit = defineEmits(['selectProject']);
 
 .item-placeholder-info,
 .item-info {
-    background: linear-gradient(135deg, var(--color-pink-light) 0%, var(--color-turquoise-light) 100%);
+    background: var(--color-yellow-light);
     color: var(--color-white);
 }
 
-.item-placeholder-info h3,
-.item-placeholder-info p {
-    color: var(--color-white);
-}
 
 @media (max-width: 1000px) {
     .grid-container {

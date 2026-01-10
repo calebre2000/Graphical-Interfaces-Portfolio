@@ -1,11 +1,25 @@
 <template>
     <div class="screen" :class="{ 'grid-view': showGrid }">
+        <!-- Top-left back button when grid is visible -->
+        <button v-if="showGrid" class="back-button" @click="showGrid = false" aria-label="Back">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                <polyline points="15 6 9 12 15 18" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+        </button>
         <template class="proje#cts-grid" v-if="showGrid">
             <ProjectsGrid @selectProject="currentProject = $event; showGrid = false" />
         </template>
-        <div class="project-details" v-else :style="gradientStyle">
-            <Card :project="projects[currentProject]">
-            </Card>
+        <div
+            class="project-details"
+            v-else
+            :style="gradientStyle"
+            @touchstart="onTouchStart"
+            @touchmove="onTouchMove"
+            @touchend="onTouchEnd"
+        >
+            <transition :name="transitionName" mode="out-in">
+                <Card :key="currentProject" :project="projects[currentProject]" />
+            </transition>
             <div class="button-container">
                 <button @click="previousProject">◀ Previous</button>
                 <button @click="showGrid = !showGrid" aria-label="Grid">
@@ -25,6 +39,10 @@ import ProjectsGrid from './ProjectsGrid.vue';
 
 const showGrid = ref(false)
 const currentProject = ref(0);
+const transitionName = ref('slide-left');
+const touchStartX = ref(0);
+const touchStartY = ref(0);
+const touchActive = ref(false);
 const numberOfProjects = computed(() => projects.length);
 
 const rotateHue = (hex, degrees) => {
@@ -74,7 +92,7 @@ const rotateHue = (hex, degrees) => {
 
 const gradientStyle = computed(() => {
     const color1 = projects[currentProject.value]?.color || '#ffffff';
-    const color2 = rotateHue(color1, 30);
+    const color2 = rotateHue(color1, 25);
     
     return {
         background: `repeating-conic-gradient(${color1} 0 25%, ${color2} 0 50%) 50% / 80px 80px`
@@ -82,11 +100,41 @@ const gradientStyle = computed(() => {
 });
 
 const nextProject = () => {
+    transitionName.value = 'slide-left';
     currentProject.value = (currentProject.value + 1) % numberOfProjects.value;
 };
 
 const previousProject = () => {
+    transitionName.value = 'slide-right';
     currentProject.value = (currentProject.value - 1 + numberOfProjects.value) % numberOfProjects.value;
+};
+
+const onTouchStart = (e) => {
+    if (showGrid.value) return;
+    const touch = e.touches[0];
+    touchStartX.value = touch.clientX;
+    touchStartY.value = touch.clientY;
+    touchActive.value = true;
+};
+
+const onTouchMove = (e) => {
+    if (!touchActive.value || showGrid.value) return;
+    const dx = e.touches[0].clientX - touchStartX.value;
+    const dy = e.touches[0].clientY - touchStartY.value;
+    if (Math.abs(dx) > Math.abs(dy)) e.preventDefault();
+};
+
+const onTouchEnd = (e) => {
+    if (!touchActive.value || showGrid.value) return;
+    const touch = e.changedTouches[0];
+    const dx = touch.clientX - touchStartX.value;
+    const dy = touch.clientY - touchStartY.value;
+    const threshold = 50;
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > threshold) {
+        if (dx < 0) nextProject();
+        else previousProject();
+    }
+    touchActive.value = false;
 };
 </script>
 <style scoped>
@@ -102,7 +150,6 @@ const previousProject = () => {
     justify-content: center;
     width: 100%;
     height: 100%;
-
 }
 
 .screen.grid-view {
@@ -112,8 +159,51 @@ const previousProject = () => {
 .project-details {
     height: 100%;
     width: 100%;
+}
+
+/* Slide transitions */
+.slide-left-enter-active,
+.slide-left-leave-active,
+.slide-right-enter-active,
+.slide-right-leave-active {
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.slide-left-enter-from,
+.slide-right-leave-to {
+    transform: translateX(30%);
+    opacity: 0;
+}
+
+.slide-left-leave-to,
+.slide-right-enter-from {
+    transform: translateX(-30%);
+    opacity: 0;
+}
+
+.slide-left-enter-to,
+.slide-left-leave-from,
+.slide-right-enter-to,
+.slide-right-leave-from {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.back-button {
+    position: absolute;
+    top: 40px;
+    left: 40px;
+    z-index: 10;
+    width: 44px;
+    height: 44px;
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.back-button .icon {
+    width: 32px;
+    height: 32px;
 }
 
 .button-container {

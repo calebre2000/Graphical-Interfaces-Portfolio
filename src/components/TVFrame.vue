@@ -3,10 +3,15 @@
         <div class="tv-inner">
             <TVScreen 
               :channel="currentChannel" 
+              :brightness="brightness"
               @nextChannel="currentChannel = $event"
               @prevChannel="currentChannel = $event"
             />
-            <TVButtons :currentChannel="currentChannel" @changeScreen="currentChannel = $event" />
+            <TVButtons 
+              :currentChannel="currentChannel" 
+              @changeScreen="currentChannel = $event"
+              @updateBrightness="handleBrightnessChange"
+            />
         </div>
     </div>
 </template>
@@ -18,8 +23,11 @@ import TVScreen from "./TVScreen.vue";
 import TVButtons from "./TVButtons.vue";
 
 const currentChannel = ref(DEFAULT_CHANNEL);
+const brightness = ref(90);
 
-
+const handleBrightnessChange = (value) => {
+  brightness.value = value;
+};
 </script>
 <style scoped>
 .tv {

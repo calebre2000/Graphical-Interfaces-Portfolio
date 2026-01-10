@@ -25,6 +25,7 @@ import Skills from "../channels/Skills.vue";
 
 const props = defineProps({
   channel: String,
+  brightness: Number,
 });
 
 const currentComponent = computed(() => {
@@ -63,6 +64,7 @@ const currentComponent = computed(() => {
   border-radius: 70px;
   overflow: hidden;
   border: 4px solid black;
+  filter: brightness(v-bind("props.brightness / 100"));
 }
 
 .inner-screen::before {

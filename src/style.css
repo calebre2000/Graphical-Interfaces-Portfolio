@@ -52,7 +52,7 @@ button {
   cursor: pointer;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  border-radius: 10px;
+  border-radius: 100px;
   /* text-shadow: 2px 4px 0 var(--color-pink); */
 }
 

@@ -302,7 +302,7 @@ onBeforeUnmount(() => {
 }
 
 .tab.active {
-    background-color: #00ff00;
+    background-color: #ff00ff;
 }
 
 table {
